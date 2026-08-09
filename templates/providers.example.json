@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "_note": "Copy this file to providers.json and adjust executable names or paths for this machine. Keep authentication in each CLI's own secure configuration. The wrapper appends the task as the final argument and runs from the explicit WorkDir.",
+  "providers": {
+    "claude": {
+      "executable": "claude",
+      "arguments": ["--print"],
+      "closeStdin": false
+    },
+    "codex": {
+      "executable": "codex",
+      "arguments": ["exec"],
+      "closeStdin": true
+    },
+    "antigravity": {
+      "executable": "gemini",
+      "arguments": ["--prompt"],
+      "closeStdin": false
+    },
+    "kimi": {
+      "executable": "kimi",
+      "arguments": ["--print"],
+      "closeStdin": false
+    },
+    "glm": {
+      "executable": "claude",
+      "arguments": ["--print", "--model", "glm-4.7-flash"],
+      "closeStdin": false
+    }
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "team": "Agent Academy",
+  "subagentsAllowed": false,
+  "_subagent_note": "Platform child/forked agents are forbidden and never count as roster members, makers, reviewers, dispatchers, approvers, fallbacks, or evidence.",
+  "_id_note": "'id' is a permanent slug. Directory and file paths depend on it: agents/<id>.md, inbox/<id>/, outbox/<id>/, and every script's member validation. Never change an id after installation.",
+  "_displayName_note": "'displayName' is the only name field onboarding may rewrite. Rename freely; nothing on disk depends on it.",
+  "_authority_note": "Exactly one member must hold 'lead'. At most one may hold 'deputy'. Authority controls coordination, never capability - every member is a technical generalist.",
+  "_status_note": "'active' members may be dispatched and may satisfy the reviewer gate. 'on-leave' members keep their seat, identity, and history but receive no work and count toward no gate. Reactivation requires an explicit Trainer order and a recorded governance update.",
+  "members": [
+    {
+      "id": "academy-lead",
+      "displayName": "Academy Lead",
+      "authority": "lead",
+      "status": "active",
+      "dispatchable": true,
+      "transport": "claude",
+      "voice": {
+        "selfReference": "Lead",
+        "anchor": "Composed, precise, supportive, and accountable for final acceptance."
+      }
+    },
+    {
+      "id": "academy-deputy",
+      "displayName": "Academy Deputy",
+      "authority": "deputy",
+      "status": "active",
+      "dispatchable": true,
+      "transport": "codex",
+      "voice": {
+        "selfReference": "Deputy",
+        "anchor": "Energetic, adaptive, clear, and resilient when plans change."
+      }
+    },
+    {
+      "id": "academy-analyst",
+      "displayName": "Academy Analyst",
+      "authority": "member",
+      "status": "active",
+      "dispatchable": true,
+      "transport": "antigravity",
+      "voice": {
+        "selfReference": "Analyst",
+        "anchor": "Evidence-driven, methodical, calm, and direct about uncertainty."
+      }
+    },
+    {
+      "id": "academy-challenger",
+      "displayName": "Academy Challenger",
+      "authority": "member",
+      "status": "active",
+      "dispatchable": true,
+      "transport": "kimi",
+      "voice": {
+        "selfReference": "Challenger",
+        "anchor": "Inventive, candid, constructive, and willing to test assumptions."
+      }
+    },
+    {
+      "id": "academy-steward",
+      "displayName": "Academy Steward",
+      "authority": "member",
+      "status": "active",
+      "dispatchable": true,
+      "transport": "glm",
+      "voice": {
+        "selfReference": "Steward",
+        "anchor": "Exacting, production-minded, thorough, and focused on completion."
+      }
+    }
+  ],
+  "onLeave": []
+}

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 2,
+  "template": "Agent Academy",
+  "subagentsAllowed": false,
+  "platform": "Windows",
+  "members": [
+    "Academy Lead",
+    "Academy Deputy",
+    "Academy Analyst",
+    "Academy Challenger",
+    "Academy Steward"
+  ],
+  "skillCount": 26,
+  "transport": {
+    "default": "generated direct wrappers",
+    "optionalUpgrade": "durable packet-compatible channel seam"
+  },
+  "subsystems": [
+    "portable governance and machine-readable roster",
+    "durable inbox and outbox task packets",
+    "cross-CLI team skill store",
+    "generated provider wrappers",
+    "portable worklog SessionStart hook",
+    "Obsidian vault scaffold",
+    "Graphify installation and single-writer workflow",
+    "project-focus manager and team-bus seam",
+    "privacy, roster, skill, and transport gates"
+  ],
+  "managedFiles": [
+    "governance/trainer.local.md",
+    "governance/assignments.local.md",
+    "governance/roster.json",
+    "providers.json",
+    "status/project-focus.json",
+    "vault/**"
+  ],
+  "excludedCategories": [
+    "credentials",
+    "machine-specific authentication",
+    "source-project history",
+    "source work history",
+    "source provider assignments",
+    "source operator identity"
+  ]
+}

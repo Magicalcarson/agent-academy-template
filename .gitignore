@@ -1,0 +1,32 @@
+# Local onboarding inputs and generated backups
+academy.local.psd1
+.agent-academy-backups/
+governance/trainer.local.md
+governance/assignments.local.md
+
+# Credentials and environment files must never be repository content
+.env
+.env.*
+*.key
+*.pem
+*.pfx
+*.p12
+
+# Machine-local and generated state
+.claude/
+.codex/
+.gemini/
+.agents/
+.kimi/
+.obsidian/workspace*
+graphify-out/
+reports/
+*.log
+*.tmp
+*.bak
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
