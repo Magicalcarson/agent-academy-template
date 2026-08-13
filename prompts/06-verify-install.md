@@ -47,7 +47,7 @@ Run this acceptance list from the repository root. Verification must not change 
 ## 3. Skills rehearsal
 
 1. [ ] Set `$env:HOME` to a new temporary directory in the rehearsal process only.
-2. [ ] Run `team-skills/sync-skills.ps1` in default dry-run mode. Require 26 manifest skills, four declared surfaces, a non-negative change count, and zero errors.
+2. [ ] Run `team-skills/sync-skills.ps1` in default dry-run mode. Require 28 manifest skills, four declared surfaces, a non-negative change count, and zero errors.
 3. [ ] Do not run `-Apply` against the operator's live home. Apply only inside the isolated temporary home if the operator explicitly wants the full rehearsal.
 
 ## 4. Prompt walkthrough

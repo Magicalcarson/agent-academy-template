@@ -12,7 +12,7 @@
 [![Subagents](https://img.shields.io/badge/platform%20subagents-forbidden-dc2626.svg)](governance/no-subagents.md)
 [![Credentials](https://img.shields.io/badge/credentials%20in%20repo-none-0f766e.svg)](#บัญชีสมาชิกและ-api-key)
 [![Reference team](https://img.shields.io/badge/reference%20team-5%20seats-7c3aed.svg)](#ทีมเริ่มต้นห้าคนแต่ปรับเปลี่ยนได้)
-[![Portable skills](https://img.shields.io/badge/portable%20skills-26-f59e0b.svg)](#skills-แบบพกพาที่ติดตั้งมาให้)
+[![Portable skills](https://img.shields.io/badge/portable%20skills-28-f59e0b.svg)](#skills-แบบพกพาที่ติดตั้งมาให้)
 
 สร้างและพัฒนาโดย **Pokpong Sittisak**
 
@@ -258,7 +258,7 @@ Reference roster สาธารณะมีห้าที่นั่งถา
 
 ## Skills แบบพกพาที่ติดตั้งมาให้
 
-Agent Academy มาพร้อม **26 Skills ที่คัดเลือกไว้** เพื่อให้การติดตั้งใหม่เริ่มด้วยวิธีทำงานทางวิศวกรรมร่วมกัน ไม่ใช่ผู้ช่วยห้าตัวที่ต่างคนต่างเดากระบวนการ Skill คือชุดคำแนะนำเฉพาะด้านที่บอก CLI ว่าเมื่อใดควรใช้ความสามารถนั้น ต้องเก็บหลักฐานอะไร ต้องเคารพขอบเขตใด และผลลัพธ์ที่เชื่อถือได้มีหน้าตาอย่างไร
+Agent Academy มาพร้อม **28 Skills ที่คัดเลือกไว้** เพื่อให้การติดตั้งใหม่เริ่มด้วยวิธีทำงานทางวิศวกรรมร่วมกัน ไม่ใช่ผู้ช่วยห้าตัวที่ต่างคนต่างเดากระบวนการ Skill คือชุดคำแนะนำเฉพาะด้านที่บอก CLI ว่าเมื่อใดควรใช้ความสามารถนั้น ต้องเก็บหลักฐานอะไร ต้องเคารพขอบเขตใด และผลลัพธ์ที่เชื่อถือได้มีหน้าตาอย่างไร
 
 Skill ไม่ได้ฝึกโมเดลใหม่ ไม่ได้ติดตั้ง service ลับ และไม่เพิ่มอำนาจให้ AI แต่ทำให้วิธีทำงานที่ทำซ้ำได้พกพาข้าม session และ provider ได้ Governance, project focus, การอนุมัติของผู้ใช้ และกฎห้าม SubAgent อยู่เหนือ Skill ทุกตัวเสมอ
 
@@ -285,7 +285,7 @@ flowchart LR
 
 ระบบจึงมี playbook ร่วมโดยไม่แกล้งทำว่าแต่ละ provider คือโมเดลเดียวกัน แต่ละ runtime ยังให้เหตุผลด้วยจุดแข็งของตน Skill เพียงจัดแนววิธีทำงาน มาตรฐานหลักฐาน และขอบเขตความปลอดภัย
 
-### Skills ทั้ง 26 รายการ
+### Skills ทั้ง 28 รายการ
 
 | กลุ่มความสามารถ | จำนวน | สิ่งที่กลุ่มนี้ช่วย |
 |---|---:|---|
@@ -294,7 +294,7 @@ flowchart LR
 | **AI systems และ agent operations** | 3 | ประเมิน LLM ออกแบบระบบ AI ระดับโครงการ และวิเคราะห์ quota/context/transport failure |
 | **Memory และ knowledge** | 6 | Daily note, consolidation, contradiction, synthesis, Obsidian architecture และ Graphify |
 | **Communication และ presentation** | 2 | การสื่อสารตามกลุ่มเป้าหมายและธีมงานนำเสนอ |
-| **รวม** | **26** | คลังที่มี version และกระจายไปทุก CLI surface ที่ประกาศไว้ |
+| **รวม** | **28** | คลังที่มี version และกระจายไปทุก CLI surface ที่ประกาศไว้ |
 
 <details>
 <summary><strong>Engineering และ architecture — 8 Skills</strong></summary>
@@ -482,7 +482,7 @@ Prompt ใช้ภาษาอังกฤษเพราะเป็นภา�
 .\team-skills\sync-skills.ps1
 ```
 
-ผลที่คาดหวังคือ Skills 26 รายการถูกวางบน surface ที่ประกาศไว้ errors เป็นศูนย์ และ dry-run รอบสุดท้ายไม่มี change เหลือ อ่าน checklist เต็มที่ [`prompts/01-install-skills.md`](prompts/01-install-skills.md)
+ผลที่คาดหวังคือ Skills 28 รายการถูกวางบน surface ที่ประกาศไว้ errors เป็นศูนย์ และ dry-run รอบสุดท้ายไม่มี change เหลือ อ่าน checklist เต็มที่ [`prompts/01-install-skills.md`](prompts/01-install-skills.md)
 
 ### 5. ตั้งค่า Provider และ Wrapper
 
@@ -529,7 +529,7 @@ graphify --help
 ใช้ checklist ที่ [`prompts/06-verify-install.md`](prompts/06-verify-install.md) โดยจุดสำคัญคือ:
 
 - local profile และ assignment file อยู่ใน `.gitignore`
-- manifest parse ได้และมี 26 Skills
+- manifest parse ได้และมี 28 Skills
 - dry-run ของ synchronizer ไม่มี error
 - roster มีจำนวน lead/deputy ถูกต้อง
 - ไม่มี credential หรือข้อมูลส่วนตัวใน tracked files
@@ -590,7 +590,7 @@ Task packet ในอนาคตเล็กลงและแม่นยำ�
 
 - ตัวตนตามบทบาทห้าตัวที่เปลี่ยน display name และ persona ได้
 - Governance สำหรับ focus, dispatch, review, safety, deletion, language และ worklog
-- [Portable Skills 26 รายการ](#skills-แบบพกพาที่ติดตั้งมาให้) พร้อม synchronizer ข้าม CLI
+- [Portable Skills 28 รายการ](#skills-แบบพกพาที่ติดตั้งมาให้) พร้อม synchronizer ข้าม CLI
 - PowerShell wrapper generator สำหรับ provider ที่กำหนด
 - Obsidian vault scaffold พร้อม portable settings
 - คู่มือติดตั้ง Graphify และกติกา single-writer

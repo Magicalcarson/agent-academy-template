@@ -42,14 +42,18 @@ scripts/Initialize-AgentAcademy.ps1
 scripts/Install-Hooks.ps1
 scripts/Install-Wrappers.ps1
 scripts/Invoke-PrivacyGate.ps1
+scripts/cooldown-team.ps1
 scripts/manage-project-focus.ps1
 scripts/new-task-packet.ps1
+scripts/send-team-session.ps1
 scripts/show-team-limits.ps1
 scripts/show-academy-menu.ps1
+scripts/start-team-session.ps1
 scripts/team-bus/orchestrator-lock.ps1
 scripts/team-bus/README.md
 scripts/team-bus/relay-lib.ps1
 scripts/worklog-guard.ps1
+scripts/warmup-team.ps1
 status/project-focus.example.json
 THIRD_PARTY_NOTICES.md
 team-skills/accessibility-review/SKILL.md
@@ -63,6 +67,7 @@ team-skills/api-design/SKILL.md
 team-skills/backend-architecture-review/SKILL.md
 team-skills/consolidate/SKILL.md
 team-skills/contradictions/SKILL.md
+team-skills/cooldown/SKILL.md
 team-skills/daily/SKILL.md
 team-skills/docker-patterns/SKILL.md
 team-skills/error-handling/SKILL.md
@@ -121,6 +126,7 @@ third-party-licenses/graphify-v0.9.12-MIT.txt
 third-party-licenses/ponytail-MIT.txt
 third-party-licenses/superpowers-MIT.txt
 team-skills/verification-loop/SKILL.md
+team-skills/warmup/SKILL.md
 templates/decision-record.md
 templates/project-plan.md
 templates/providers.example.json
@@ -145,4 +151,5 @@ tests/NoSubagents.Tests.ps1
 tests/Roster.Tests.ps1
 tests/SkillsManifest.Tests.ps1
 tests/Transport.Tests.ps1
+tests/WarmSession.Tests.ps1
 vault/README.md
