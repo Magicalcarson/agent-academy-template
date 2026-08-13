@@ -5,7 +5,7 @@ Dispatch has two independent layers. Keeping them separate is the point of this 
 - **The packet contract** — what a unit of work must contain, who reviews it, what counts as done. Defined in `workflow.md`. It never changes.
 - **The transport** — the mechanism that carries the packet to a member and brings the reply back. Swappable.
 
-Everything in this template runs on Tier 1. Tier 2 is specified but not shipped, so that a team who outgrows Tier 1 can upgrade without rewriting governance.
+Tier 1 remains the default. Tier 2 is an optional shipped Windows transport for teams that explicitly want visible persistent sessions.
 
 ## The contract a transport must satisfy
 
@@ -37,9 +37,9 @@ One process per dispatch. `scripts/Install-Wrappers.ps1` generates a wrapper per
 - **Serial fan-out.** Dispatching to four members means four blocking calls, so wall-clock time is the sum, not the maximum.
 - **Everything passes through the lead.** A reply reaches another member only by being read into the lead's context and re-sent. Member-to-member coordination is therefore the lead's most expensive activity.
 
-## Tier 2 — warm-session channel (specified, not shipped)
+## Tier 2 — visible warm-session channel (optional, shipped)
 
-A long-lived session per member plus a message queue keyed by member. The dispatcher writes into the queue; a delivery loop injects the message into the member's live session when that session is idle.
+A long-lived visible Windows Terminal session per member. `scripts/warmup-team.ps1` opens or reuses exact named windows, `scripts/send-team-session.ps1` injects a durable packet prompt after validating process identity, and `scripts/cooldown-team.ps1` closes exact recorded windows without killing the shared terminal process. Provider-native interactive arguments come from untracked `providers.json`.
 
 **What it buys, concretely:**
 

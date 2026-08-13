@@ -5,26 +5,31 @@
     "claude": {
       "executable": "claude",
       "arguments": ["--print"],
+      "interactiveArguments": [],
       "closeStdin": false
     },
     "codex": {
       "executable": "codex",
       "arguments": ["exec"],
+      "interactiveArguments": ["--cd", "{workDir}", "--sandbox", "workspace-write"],
       "closeStdin": true
     },
     "antigravity": {
       "executable": "gemini",
       "arguments": ["--prompt"],
+      "interactiveArguments": ["--prompt-interactive"],
       "closeStdin": false
     },
     "kimi": {
       "executable": "kimi",
       "arguments": ["--print"],
+      "interactiveArguments": [],
       "closeStdin": false
     },
     "glm": {
       "executable": "claude",
       "arguments": ["--print", "--model", "glm-4.7-flash"],
+      "interactiveArguments": ["--model", "glm-4.7-flash"],
       "closeStdin": false
     }
   }

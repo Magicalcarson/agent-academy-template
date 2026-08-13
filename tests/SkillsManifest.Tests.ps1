@@ -23,8 +23,8 @@ Describe 'Portable skills manifest contract' {
         ($surfaceNames -join ',') | Should Be ($expectedSurfaces -join ',')
     }
 
-    It 'contains exactly 26 generic skills with unique names' {
-        $script:skills.Count | Should Be 26
+    It 'contains exactly 28 generic skills with unique names' {
+        $script:skills.Count | Should Be 28
         $names = @($script:skills | ForEach-Object { $_.name })
         @($names | Select-Object -Unique).Count | Should Be $names.Count
     }

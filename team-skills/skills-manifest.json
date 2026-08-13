@@ -27,6 +27,7 @@
     { "name": "backend-architecture-review", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" },
     { "name": "consolidate", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored (vault command port)" },
     { "name": "contradictions", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored (vault command port)" },
+    { "name": "cooldown", "mode": "junction", "docOnly": false, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" },
     { "name": "daily", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored (vault command port)" },
     { "name": "docker-patterns", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" },
     { "name": "error-handling", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" },
@@ -45,6 +46,7 @@
     { "name": "systematic-debugging", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "obra/superpowers, Jesse Vincent (MIT)", "sourceUrl": "https://github.com/obra/superpowers", "licenseFile": "third-party-licenses/superpowers-MIT.txt" },
     { "name": "tdd-workflow", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" },
     { "name": "theme-factory", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "anthropics/skills (Apache-2.0)", "sourceUrl": "https://github.com/anthropics/skills", "licenseFile": "team-skills/theme-factory/LICENSE.txt" },
-    { "name": "verification-loop", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" }
+    { "name": "verification-loop", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" },
+    { "name": "warmup", "mode": "junction", "docOnly": false, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" }
   ]
 }

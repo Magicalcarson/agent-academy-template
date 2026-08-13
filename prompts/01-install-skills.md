@@ -11,7 +11,7 @@ Install the canonical generic skill store on the four supported CLI surfaces. Dr
   Get-Content -Raw .\team-skills\skills-manifest.json | ConvertFrom-Json | Out-Null
   ```
 
-- [ ] Confirm the manifest represents 26 skill directories and the available surfaces are Claude Code, Codex, Kimi, and Antigravity.
+- [ ] Confirm the manifest represents 28 skill directories and the available surfaces are Claude Code, Codex, Kimi, and Antigravity.
 - [ ] Read `team-skills/sync-skills.ps1` before executing it. Do not modify it during installation.
 
 ## Checklist
@@ -36,7 +36,7 @@ Install the canonical generic skill store on the four supported CLI surfaces. Dr
 
 ## Expected result
 
-- All 26 generic skills are planned for their declared surfaces.
+- All 28 generic skills are planned for their declared surfaces.
 - Claude Code, Codex, and Kimi use the manifest-selected link or mirror mode.
 - Antigravity has real mirrored directories.
 - A second dry-run is clean and idempotent.

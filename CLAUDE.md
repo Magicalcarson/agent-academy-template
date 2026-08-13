@@ -28,3 +28,7 @@ This file is a thin index. The detailed rules live in `governance/`.
 9. Never create, invoke, wait for, resume, or use a platform subagent. Only real roster members reached through direct provider wrappers count as Academy delegation or review.
 
 `AGENTS.md` is the portable constitution shared with every other CLI. Where documents overlap, `governance/` wins.
+
+## Compact instructions
+
+Preserve the current focus, active packet and mutation boundary, changed files, verification state, unresolved risks, checkpoint, next action, and worklog link. After compaction or `/clear`, apply the context-continuity guard in `AGENTS.md` before resuming.
