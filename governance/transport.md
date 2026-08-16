@@ -62,6 +62,41 @@ Stay on Tier 1 unless you can name the specific pain you are buying your way out
 
 **Do not delete the durable layer when adding the fast one.** The correct upgrade keeps packets in `inbox/`/`outbox/` as the record of what was agreed, and uses the channel only as the carrier. A team that moves its contracts into a volatile queue has traded away auditability for latency and will discover the cost at the worst possible time.
 
+## Delivery is not completion
+
+The two tiers have opposite completion semantics, and confusing them quietly moves the job of tracking replies onto the human.
+
+Tier 1 is synchronous. You call the wrapper, it blocks, and the member's whole reply comes back as the command's output. You know it finished because you are holding the answer.
+
+Tier 2 is fire-and-forget. `send-team-session.ps1` returns `input-sent` the moment the prompt is injected, and it deliberately stops there. That is the correct design: a carrier that reported "done" while a member was still typing would be manufacturing results that do not exist. But it means nothing tells you the work finished.
+
+So on Tier 2 the dispatcher owns completion awareness. After dispatching, arm a watch instead of waiting to be told:
+
+- **Standing coverage, preferred.** One long-lived watcher over the whole `outbox/` tree that emits each newly appeared reply path. Set it up once per session and it covers every member and every later dispatch.
+- **Single dispatch.** A background wait on the one expected `outbox/<member-id>/<task-id>.md` path.
+
+Prefer the standing watcher. A per-dispatch watch has to be remembered every single time, and it will eventually be forgotten on the dispatch that mattered.
+
+Watch the **durable reply artifact**, never the delivery status. `input-sent` proves only that a window received keystrokes.
+
+**Silence needs its own watch.** An arrival watcher can never fire for a member who was reached but produced nothing — which is exactly what a member with broken tooling looks like. Their session is quiet, no file appears, and quiet is indistinguishable from still-working. Run a second watch that reports any dispatch with no reply after a fixed interval, then apply the contract above: separate *never reached* from *reached but unable* before re-dispatching anything.
+
+## Choosing the channel by weight
+
+Tiers are about how a packet travels. This is a different axis: how heavy the message itself should be.
+
+| Channel | Use for | Durable record |
+|---|---|---|
+| Direct injected message | a quick question, a nudge, a status check | none |
+| Peer message file | coordination worth leaving a trace | yes |
+| Task packet | real work with a mutation boundary, acceptance criteria, and a review gate | yes, and it enters the review process |
+
+`send-team-session.ps1 -Message` caps a direct message at 280 characters on a single line. Treat that limit as a filter rather than an annoyance: **if the question does not fit on one line, it is probably real work and deserves a packet.**
+
+An oversized packet is not merely wordy. It spends the recipient's context and quota, buries the actual question under ceremony, and teaches everyone to skim packets — which erodes the one mechanism that makes a real packet get read carefully. Ceremony applied to trivia is how a review gate stops working.
+
+The trade is not only weight. A direct message leaves no artifact, so the dispatcher never sees the answer and neither watch above can fire on it. The sharper question is therefore **does anyone need to act on this answer later?** If a human is watching the session and simply wants to know something, a direct message is right. If the answer feeds a decision, or anyone may need to audit it, it needs a file.
+
 ## Provider configuration
 
 `providers.json` (created from `templates/providers.example.json`, untracked) maps each transport key in `roster.json` to a CLI on this machine: the executable, its arguments, and its working-directory flag.

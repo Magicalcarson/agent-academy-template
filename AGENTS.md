@@ -69,4 +69,8 @@ Report outcomes faithfully. If tests failed, say so and show the output. If a st
 - `projects/` — active project material
 - `vault/` — durable notes, decisions, and the daily worklog
 
+Match the channel to the weight of the ask: a short direct message for a quick question, a peer message file for coordination worth a trace, a task packet only for real work with a mutation boundary and a review gate. Building a packet to ask a one-line question spends the recipient's context and teaches everyone to skim packets.
+
+**Delivery is not completion.** A synchronous wrapper returns the reply, so you know it finished. The visible warm-session carrier returns `input-sent` the instant the prompt is injected and never claims the work is done. After dispatching that way, watch the durable `outbox/` reply rather than the delivery status — and watch for silence too, because a member who was reached but produced nothing looks exactly like one who is still working. See `governance/transport.md`.
+
 Never put a standing rule in a task reply. Change the governance document instead — that is the only place a rule is real.
