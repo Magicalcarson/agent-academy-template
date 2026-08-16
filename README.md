@@ -20,7 +20,7 @@ Created and developed by **Pokpong Sittisak**
 
 [Why it improves](#the-system-improves-every-time-it-works) · [No SubAgents](#no-subagents-real-external-perspectives) · [Provider diversity](#provider-diversity-and-meeting-modes)
 
-[Get started](#five-minute-quickstart) · [Skills](#built-in-portable-skills) · [Workflow](#how-it-works) · [Obsidian](#obsidian-second-brain) · [Graphify](#graphify-knowledge-graph) · [Installation guide](INSTALL.md)
+[Get started](#five-minute-quickstart) · [Skills](#built-in-portable-skills) · [Workflow](#how-it-works) · [Dispatch channels](#dispatch-channels-and-completion-awareness) · [Obsidian](#obsidian-second-brain) · [Graphify](#graphify-knowledge-graph) · [Installation guide](INSTALL.md)
 
 </div>
 
@@ -424,6 +424,64 @@ flowchart LR
 ```
 
 The human operator remains the final authority. AI members may research, implement, challenge assumptions, test, or review, but access never becomes permission and no member approves her own code alone.
+
+## Dispatch channels and completion awareness
+
+Getting a message to a member and knowing the work is finished are two different problems. Agent Academy treats them separately, because collapsing them is how a team quietly starts losing replies.
+
+### Match the channel to the weight of the ask
+
+Three channels ship with the system. Choose by what the request actually is, not by habit.
+
+| Channel | Use for | Leaves a record |
+|---|---|---|
+| **Direct message** — `send-team-session.ps1 -Message` | A quick question, a nudge, a status check | No |
+| **Peer message file** — a note in the recipient's inbox | Coordination that should be traceable later | Yes |
+| **Task packet** — `new-task-packet.ps1` | Real work with a mutation boundary, acceptance criteria, and a review gate | Yes, and it enters the review process |
+
+A direct message is deliberately limited to a single short line. That limit is a useful filter: **if the question does not fit on one line, it is probably real work and deserves a packet.**
+
+An oversized packet is not merely verbose. It spends the recipient's context and quota, buries the real question inside ceremony, and trains everyone to skim packets—which erodes the one mechanism that makes genuine packets get read carefully.
+
+Weight is only half the decision. A direct message leaves no artifact, so nothing can watch for its answer. The sharper test is therefore **“does anyone need to act on this answer later?”** If you are watching the session and simply want to know, a direct message is right. If the answer feeds a decision or must be auditable, it needs a file.
+
+### Delivery is not completion
+
+The two transport tiers have opposite completion semantics:
+
+- A **Tier 1 direct wrapper** is synchronous. The call blocks and the member's whole reply returns as the command's output, so completion is self-evident.
+- The **Tier 2 warm-session channel** is fire-and-forget. It returns `input-sent` the moment the prompt is injected into the window, and deliberately does not infer completion—a carrier that reported "done" while a member was still working would manufacture results that do not exist.
+
+```mermaid
+flowchart LR
+    D[Dispatcher sends packet] --> I["Carrier returns input-sent"]
+    I -. proves only that keystrokes arrived .-> X[Not completion]
+    D --> A[Arrival watch on outbox/]
+    D --> S[Timeout watch for silence]
+    A --> R[Reply file appears → review]
+    S --> Q[No reply in N minutes → investigate]
+
+    classDef bad fill:#7f1d1d,color:#fff,stroke:#ef4444,stroke-width:2px;
+    classDef good fill:#064e3b,color:#fff,stroke:#34d399,stroke-width:2px;
+    class X bad;
+    class R,Q good;
+```
+
+So the dispatcher—not the carrier—owns completion awareness. After any warm-session dispatch, arm a watch rather than waiting to be told:
+
+- **Standing coverage (preferred).** One persistent watcher over the whole `outbox/` tree that reports each newly appeared reply. Set it up once per session; it then covers every member and every later dispatch.
+- **Single dispatch.** A background wait on the one expected `outbox/<member>/<task-id>.md` path.
+
+Prefer the standing watch. A per-dispatch watch has to be remembered every single time, and will eventually be forgotten.
+
+Watch the **durable reply artifact**, never the delivery status.
+
+> [!IMPORTANT]
+> **Silence needs its own watch.** An arrival watcher can only fire when a file appears, so it can never detect a member who was reached but produced nothing—the exact shape of a member whose tooling is broken. Run a second timeout watch that reports any dispatch with no reply after a defined interval. When it fires, distinguish *never reached the member* from *reached the member but no answer arrived* before re-dispatching anything.
+
+Without these two watches, the operator becomes the polling mechanism—checking manually whether anything came back. That is precisely the coordination work the system exists to absorb.
+
+The full rules are in [`governance/transport.md`](governance/transport.md).
 
 ## Five-minute quickstart
 
