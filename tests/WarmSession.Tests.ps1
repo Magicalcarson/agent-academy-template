@@ -44,4 +44,53 @@ Describe 'Visible warm-session transport' {
         $text | Should Match 'WM_CLOSE'
         $text | Should Not Match 'Stop-Process|taskkill'
     }
+
+    It 'uses non-json temp suffix and cleans up on atomic tracking failure' {
+        $text = Get-Content -Raw -LiteralPath $sessionSender
+        $text | Should Match '\.writing'
+        $text | Should Match 'try\s*\{'
+        $text | Should Match 'finally\s*\{'
+        $text | Should Match 'Remove-Item -LiteralPath \$temporaryTrackingPath'
+    }
+
+    It 'refuses hand-planted partial temp files and enumerates only completed dispatch records' {
+        $testDir = [System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), ('test-dispatches-' + [Guid]::NewGuid().ToString('N')))
+        New-Item -ItemType Directory -Path $testDir -Force | Out-Null
+        try {
+            # Plant an interrupted partial write with non-json extension
+            $partialTemp = [System.IO.Path]::Combine($testDir, '.tmp-interrupted-write.writing')
+            Set-Content -LiteralPath $partialTemp -Value '{"member":"academy-deputy","schemaVersion":1,"interrupted":' -Encoding UTF8
+
+            # Plant a completed valid record
+            $validRecord = [System.IO.Path]::Combine($testDir, 'academy-deputy__20260902-120000-task.json')
+            [ordered]@{
+                schemaVersion = 1
+                member = 'academy-deputy'
+                dispatcher = 'academy-lead'
+                packetPath = 'inbox/academy-deputy/20260902-120000-task.md'
+                expectedOutboxPath = 'outbox/academy-deputy/20260902-120000-task.md'
+                dispatchedAt = [DateTime]::UtcNow.ToString('o')
+                timeoutMinutes = 15
+                targetProcessId = 1234
+                targetProcessStartTime = [DateTime]::UtcNow.ToString('o')
+            } | ConvertTo-Json | Set-Content -LiteralPath $validRecord -Encoding UTF8
+
+            # Standard pending-dispatches reader enumerates *.json
+            $discoveredJsonFiles = @(Get-ChildItem -LiteralPath $testDir -Filter '*.json' -File | Where-Object { $_.Name -notlike '.tmp*' })
+            $discoveredJsonFiles.Count | Should Be 1
+            $discoveredJsonFiles[0].Name | Should Be 'academy-deputy__20260902-120000-task.json'
+
+            # The partial temp file is never enumerated as a valid dispatch record
+            $parsedDispatches = @(foreach ($file in $discoveredJsonFiles) {
+                Get-Content -LiteralPath $file.FullName -Raw -Encoding UTF8 | ConvertFrom-Json
+            })
+            $parsedDispatches.Count | Should Be 1
+            $parsedDispatches[0].member | Should Be 'academy-deputy'
+            $parsedDispatches[0].timeoutMinutes | Should Be 15
+        } finally {
+            if (Test-Path -LiteralPath $testDir) {
+                Remove-Item -LiteralPath $testDir -Recurse -Force -ErrorAction SilentlyContinue
+            }
+        }
+    }
 }

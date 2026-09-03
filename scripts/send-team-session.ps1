@@ -15,6 +15,13 @@ param(
 
     [string]$Message,
 
+    [switch]$ControllerNotification,
+
+    [ValidateRange(1, 1440)]
+    [int]$TimeoutMinutes = 15,
+
+    [int]$CoordinatorEpoch,
+
     [string]$Root
 )
 
@@ -23,12 +30,21 @@ if ([string]::IsNullOrWhiteSpace($Root)) {
     $Root = Split-Path -Parent $PSScriptRoot
 }
 $resolvedRoot = [System.IO.Path]::GetFullPath($Root)
+$coordinatorState = [System.IO.Path]::Combine($resolvedRoot, 'status', 'coordinator-lease.local.json')
+if (Test-Path -LiteralPath $coordinatorState) {
+    $coordinatorScript = [System.IO.Path]::Combine($resolvedRoot, 'scripts', 'team-coordinator.ps1')
+    if (Test-Path -LiteralPath $coordinatorScript) {
+        $fence = & $coordinatorScript -Action Assert -Coordinator $Dispatcher -Epoch $CoordinatorEpoch -StatePath $coordinatorState
+        if (-not $fence.allowed) { throw "Coordinator fence rejected session send: active=$($fence.activeCoordinator) epoch=$($fence.epoch) state=$($fence.state)" }
+    }
+}
 
 $allowed = if ($Dispatcher -eq 'academy-lead') {
     @('academy-deputy', 'academy-analyst', 'academy-challenger', 'academy-steward')
 } else {
     @('academy-lead', 'academy-analyst', 'academy-challenger', 'academy-steward')
 }
+if ($ControllerNotification -and -not [string]::IsNullOrWhiteSpace($Message)) { $allowed += $Dispatcher }
 if ($Member -notin $allowed) {
     throw "Dispatcher '$Dispatcher' is not authorized to send to '$Member'."
 }
@@ -58,20 +74,20 @@ $actionType = $null
 
 if (-not [string]::IsNullOrWhiteSpace($PacketPath)) {
     $resolvedPacket = [System.IO.Path]::GetFullPath($PacketPath)
-    $memberInbox = [System.IO.Path]::GetFullPath((Join-Path $resolvedRoot "inbox\$Member"))
-    $inboxPrefix = $memberInbox.TrimEnd('\') + '\'
+    $memberInbox = [System.IO.Path]::GetFullPath(([System.IO.Path]::Combine($resolvedRoot, 'inbox', $Member)))
+    $inboxPrefix = $memberInbox.TrimEnd([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar) + [System.IO.Path]::DirectorySeparatorChar
     if (-not $resolvedPacket.StartsWith($inboxPrefix, [StringComparison]::OrdinalIgnoreCase)) {
         throw "Packet must be inside the target member inbox: $memberInbox"
     }
     if (-not (Test-Path -LiteralPath $resolvedPacket -PathType Leaf)) {
         throw "Task packet not found: $resolvedPacket"
     }
-    $memberOutbox = [System.IO.Path]::GetFullPath((Join-Path $resolvedRoot "outbox\$Member"))
-    $matchingReply = Join-Path $memberOutbox ([System.IO.Path]::GetFileName($resolvedPacket))
+    $memberOutbox = [System.IO.Path]::GetFullPath(([System.IO.Path]::Combine($resolvedRoot, 'outbox', $Member)))
+    $matchingReply = [System.IO.Path]::Combine($memberOutbox, [System.IO.Path]::GetFileName($resolvedPacket))
     if (Test-Path -LiteralPath $matchingReply -PathType Leaf) {
         throw "Task packet already has a durable outbox reply and must not be re-delivered: $matchingReply"
     }
-    $relativePacket = $resolvedPacket.Substring($resolvedRoot.TrimEnd('\').Length + 1).Replace('\', '/')
+    $relativePacket = [System.IO.Path]::GetRelativePath($resolvedRoot, $resolvedPacket).Replace('\', '/')
     $messageText = "Read the durable task packet at $relativePacket and execute only that packet. Keep your response and all tool activity visible in this existing interactive session."
     $action = "Deliver packet $relativePacket to the existing interactive session"
     $actionType = 'DeliverPacket'
@@ -105,7 +121,7 @@ $result = [ordered]@{
 }
 
 if ($PSCmdlet.ShouldProcess($definition.windowTitle, $action)) {
-    $statePath = Join-Path $resolvedRoot "status\warmup-sessions.local\$Member.json"
+    $statePath = [System.IO.Path]::Combine($resolvedRoot, 'status', 'warmup-sessions.local', "$Member.json")
     if (-not (Test-Path -LiteralPath $statePath -PathType Leaf)) {
         throw "No warm session state for '$Member'. Run warmup first."
     }
@@ -272,6 +288,34 @@ public static class AcademyUnicodeInput {
         # keystrokes. Receipt, rendering, and submission remain unconfirmed
         # until visible session output or a durable outbox artifact appears.
         $result.status = 'input-sent'
+        if (-not [string]::IsNullOrWhiteSpace($PacketPath)) {
+            $trackingDirectory = [System.IO.Path]::Combine($resolvedRoot, 'status', 'pending-dispatches.local')
+            if (-not (Test-Path -LiteralPath $trackingDirectory)) {
+                New-Item -ItemType Directory -Path $trackingDirectory -Force | Out-Null
+            }
+            $trackingName = $Member + '__' + [System.IO.Path]::GetFileNameWithoutExtension($resolvedPacket) + '.json'
+            $trackingPath = [System.IO.Path]::Combine($trackingDirectory, $trackingName)
+            $temporaryTrackingPath = [System.IO.Path]::Combine($trackingDirectory, ('.tmp-' + [Guid]::NewGuid().ToString('N') + '.writing'))
+            $relativeReply = [System.IO.Path]::GetRelativePath($resolvedRoot, $matchingReply).Replace('\', '/')
+            try {
+                [ordered]@{
+                    schemaVersion = 1
+                    member = $Member
+                    dispatcher = $Dispatcher
+                    packetPath = $relativePacket
+                    expectedOutboxPath = $relativeReply
+                    dispatchedAt = [DateTime]::UtcNow.ToString('o')
+                    timeoutMinutes = $TimeoutMinutes
+                    targetProcessId = $process.Id
+                    targetProcessStartTime = $process.StartTime.ToUniversalTime().ToString('o')
+                } | ConvertTo-Json | Set-Content -LiteralPath $temporaryTrackingPath -Encoding UTF8
+                Move-Item -LiteralPath $temporaryTrackingPath -Destination $trackingPath -Force
+            } finally {
+                if (Test-Path -LiteralPath $temporaryTrackingPath) {
+                    Remove-Item -LiteralPath $temporaryTrackingPath -Force -ErrorAction SilentlyContinue
+                }
+            }
+        }
     }
     $result.processId = $process.Id
     $result.windowHandle = $windowHandle.ToInt64()

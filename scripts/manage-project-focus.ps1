@@ -24,7 +24,7 @@ $ErrorActionPreference = 'Stop'
 $ValidStatuses = @('queued', 'focused', 'waiting', 'paused', 'completed', 'archived')
 
 if ([string]::IsNullOrWhiteSpace($StatePath)) {
-    $StatePath = Join-Path (Split-Path -Parent $PSScriptRoot) 'status\project-focus.json'
+    $StatePath = [System.IO.Path]::Combine((Split-Path -Parent $PSScriptRoot), 'status', 'project-focus.json')
 }
 
 function Get-EmptyAcademyProjectState {
@@ -51,7 +51,7 @@ function Get-AcademyProjectState {
     }
 
     try {
-        return Get-Content -Raw -LiteralPath $Path | ConvertFrom-Json
+        return Get-Content -Raw -Encoding UTF8 -LiteralPath $Path | ConvertFrom-Json
     } catch {
         throw "Project-focus state is not valid JSON: $Path. $($_.Exception.Message)"
     }

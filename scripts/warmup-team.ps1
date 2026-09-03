@@ -4,7 +4,13 @@ param(
     [ValidateSet('academy-lead', 'academy-deputy')]
     [string]$Dispatcher,
 
-    [string]$WorkDir
+    [ValidateSet('academy-lead', 'academy-deputy', 'academy-analyst', 'academy-challenger', 'academy-steward')]
+    [string[]]$Member,
+
+    [string]$WorkDir,
+
+    [ValidateSet('shadow', 'auto')]
+    [string]$CoordinatorMode = 'shadow'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -148,23 +154,81 @@ if (-not (Get-Command wt.exe -ErrorAction SilentlyContinue)) {
     throw 'Windows Terminal (wt.exe) is required for persistent visible sessions.'
 }
 
-$sessionHost = Join-Path $academyRoot 'scripts\start-team-session.ps1'
+$sessionHost = [System.IO.Path]::Combine($academyRoot, 'scripts', 'start-team-session.ps1')
 if (-not (Test-Path -LiteralPath $sessionHost -PathType Leaf)) {
     throw "Session host not found: $sessionHost"
 }
-$stateDirectory = Join-Path $academyRoot 'status\warmup-sessions.local'
+$stateDirectory = [System.IO.Path]::Combine($academyRoot, 'status', 'warmup-sessions.local')
 
-$members = if ($Dispatcher -eq 'academy-lead') {
+$defaultMembers = if ($Dispatcher -eq 'academy-lead') {
     @('academy-deputy', 'academy-analyst', 'academy-challenger', 'academy-steward')
 } else {
     @('academy-lead', 'academy-analyst', 'academy-challenger', 'academy-steward')
 }
-$rosterPath = Join-Path $academyRoot 'governance\roster.json'
-$roster = Get-Content -Raw -LiteralPath $rosterPath | ConvertFrom-Json
-$dispatchableIds = @($roster.members | Where-Object {
-        $_.status -eq 'active' -and [bool]$_.dispatchable
-    } | ForEach-Object { [string]$_.id })
-$members = @($members | Where-Object { $dispatchableIds -contains $_ })
+$isScoped = $PSBoundParameters.ContainsKey('Member')
+$members = if ($isScoped) {
+    $selected = @()
+    foreach ($candidate in @($Member)) {
+        if ($defaultMembers -notcontains $candidate) {
+            throw "Scoped warmup target '$candidate' is not eligible for dispatcher '$Dispatcher'."
+        }
+        if ($selected -notcontains $candidate) { $selected += $candidate }
+    }
+    $selected
+} else {
+    $defaultMembers
+}
+
+$rosterPath = [System.IO.Path]::Combine($academyRoot, 'governance', 'roster.json')
+if (Test-Path -LiteralPath $rosterPath -PathType Leaf) {
+    $roster = Get-Content -Raw -LiteralPath $rosterPath | ConvertFrom-Json
+    $dispatchableIds = @($roster.members | Where-Object {
+            $_.status -eq 'active' -and [bool]$_.dispatchable
+        } | ForEach-Object { [string]$_.id })
+    $members = @($members | Where-Object { $dispatchableIds -contains $_ })
+}
+
+$coordinatorScript = [System.IO.Path]::Combine($academyRoot, 'scripts', 'team-coordinator.ps1')
+if ($isScoped) {
+    $leasePath = [System.IO.Path]::Combine($academyRoot, 'status', 'coordinator-lease.local.json')
+    if (Test-Path -LiteralPath $leasePath -PathType Leaf) {
+        if (Test-Path -LiteralPath $coordinatorScript -PathType Leaf) {
+            $existingLease = Get-Content -Raw -LiteralPath $leasePath | ConvertFrom-Json
+            $fence = & $coordinatorScript -Action Assert -Coordinator $Dispatcher -Epoch ([int]$existingLease.epoch) -StatePath $leasePath
+            if (-not $fence.allowed) {
+                throw "Scoped warmup coordinator fence rejected dispatcher '$Dispatcher'."
+            }
+        }
+    }
+} elseif (Test-Path -LiteralPath $coordinatorScript -PathType Leaf) {
+    if ($PSCmdlet.ShouldProcess('Academy coordinator', "Initialize $CoordinatorMode coordinator run and open visible monitor")) {
+        $lease = & $coordinatorScript -Action Initialize -Coordinator $Dispatcher -Mode $CoordinatorMode
+        $monitorStatePath = Join-Path $stateDirectory 'coordinator-monitor.json'
+        $existingMonitor = $null
+        if (Test-Path -LiteralPath $monitorStatePath) {
+            try {
+                $monitorState = Get-Content -Raw $monitorStatePath | ConvertFrom-Json
+                $candidate = Get-Process -Id ([int]$monitorState.processId) -ErrorAction SilentlyContinue
+                $recordedHandle = [IntPtr]([long]$monitorState.windowHandle)
+                $exactMonitor = Get-ExactWindow -WindowTitle 'Agent Academy - Coordinator Monitor'
+                if ($candidate -and $candidate.StartTime.ToUniversalTime().ToString('o') -eq $monitorState.processStartTime -and $exactMonitor -and $exactMonitor.ProcessId -eq $candidate.Id -and $exactMonitor.Handle -eq $recordedHandle) { $existingMonitor = $candidate }
+            } catch { $existingMonitor = $null }
+        }
+        if (-not $existingMonitor) {
+            $watcher = [System.IO.Path]::Combine($academyRoot, 'scripts', 'watch-team-coordinator.ps1')
+            if (Test-Path -LiteralPath $watcher -PathType Leaf) {
+                $monitorTitle = 'Agent Academy - Coordinator Monitor'
+                $nativeArgs = @('-w','agent-academy-coordinator-monitor','new-tab','--title',('"{0}"' -f $monitorTitle),'--suppressApplicationTitle','--startingDirectory',('"{0}"' -f $academyRoot),'powershell.exe','-NoLogo','-NoProfile','-ExecutionPolicy','Bypass','-NoExit','-File',('"{0}"' -f $watcher),'-Root',('"{0}"' -f $academyRoot))
+                Start-Process -FilePath 'wt.exe' -ArgumentList $nativeArgs -WindowStyle Normal | Out-Null
+                $monitorWindow = Find-Window -WindowTitle $monitorTitle
+                $process = $monitorWindow.Process
+                if (-not (Test-Path $stateDirectory)) { New-Item -ItemType Directory -Path $stateDirectory -Force | Out-Null }
+                $monitorState = [ordered]@{ schemaVersion = 1; runId = $lease.runId; processId = $process.Id; processStartTime = $process.StartTime.ToUniversalTime().ToString('o'); windowHandle = $monitorWindow.Handle.ToInt64(); windowTitle = $monitorTitle; recordedAt = [datetime]::UtcNow.ToString('o') }
+                [IO.File]::WriteAllText($monitorStatePath, ($monitorState | ConvertTo-Json), [Text.UTF8Encoding]::new($false))
+            }
+        }
+    }
+}
 
 foreach ($member in $members) {
     $definition = Get-SessionDefinition -Member $member

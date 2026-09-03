@@ -4,13 +4,16 @@ param(
     [ValidateSet('academy-lead', 'academy-deputy')]
     [string]$Dispatcher,
 
+    [ValidateSet('academy-lead', 'academy-deputy', 'academy-analyst', 'academy-challenger', 'academy-steward')]
+    [string[]]$Member,
+
     [ValidateRange(1, 30)]
     [int]$CloseTimeoutSeconds = 8
 )
 
 $ErrorActionPreference = 'Stop'
 $academyRoot = Split-Path -Parent $PSScriptRoot
-$stateDirectory = Join-Path $academyRoot 'status\warmup-sessions.local'
+$stateDirectory = [System.IO.Path]::Combine($academyRoot, 'status', 'warmup-sessions.local')
 
 if (-not ('AcademyCooldownWindow' -as [type])) {
     Add-Type -TypeDefinition @'
@@ -92,10 +95,48 @@ function Test-RecordedSessionIdentity {
     return Get-IdentityResult -IsValid $true -Reason $null
 }
 
-$members = if ($Dispatcher -eq 'academy-lead') {
+$defaultMembers = if ($Dispatcher -eq 'academy-lead') {
     @('academy-deputy', 'academy-analyst', 'academy-challenger', 'academy-steward', 'academy-lead')
 } else {
     @('academy-lead', 'academy-analyst', 'academy-challenger', 'academy-steward', 'academy-deputy')
+}
+$eligibleScopedMembers = @($defaultMembers | Where-Object { $_ -ne $Dispatcher })
+$isScoped = $PSBoundParameters.ContainsKey('Member')
+$members = if ($isScoped) {
+    $selected = @()
+    foreach ($candidate in @($Member)) {
+        if ($eligibleScopedMembers -notcontains $candidate) {
+            throw "Scoped cooldown target '$candidate' is not eligible for dispatcher '$Dispatcher'."
+        }
+        if ($selected -notcontains $candidate) { $selected += $candidate }
+    }
+    $selected
+} else {
+    $defaultMembers
+}
+
+if (-not $isScoped -and $PSCmdlet.ShouldProcess('Academy coordinator', 'Seal coordinator run and close exact monitor process')) {
+    $leasePath = [System.IO.Path]::Combine($academyRoot, 'status', 'coordinator-lease.local.json')
+    $coordinatorScript = [System.IO.Path]::Combine($academyRoot, 'scripts', 'team-coordinator.ps1')
+    if (Test-Path -LiteralPath $leasePath -PathType Leaf) {
+        if (Test-Path -LiteralPath $coordinatorScript -PathType Leaf) {
+            $null = & $coordinatorScript -Action Seal -StatePath $leasePath
+        }
+    }
+    $monitorStatePath = Join-Path $stateDirectory 'coordinator-monitor.json'
+    if (Test-Path -LiteralPath $monitorStatePath -PathType Leaf) {
+        try {
+            $monitorState = Get-Content -Raw -LiteralPath $monitorStatePath | ConvertFrom-Json
+            $monitor = Get-Process -Id ([int]$monitorState.processId) -ErrorAction SilentlyContinue
+            if ($monitor -and $monitor.StartTime.ToUniversalTime().ToString('o') -eq $monitorState.processStartTime) {
+                $monitorHandle = [IntPtr]([long]$monitorState.windowHandle)
+                [uint32]$monitorOwnerPid = 0
+                if ([AcademyCooldownWindow]::IsWindow($monitorHandle)) { [void][AcademyCooldownWindow]::GetWindowThreadProcessId($monitorHandle, [ref]$monitorOwnerPid) }
+                if ([int]$monitorOwnerPid -eq $monitor.Id) { [void][AcademyCooldownWindow]::PostMessage($monitorHandle, [AcademyCooldownWindow]::WM_CLOSE, [IntPtr]::Zero, [IntPtr]::Zero) }
+            }
+            Remove-Item -LiteralPath $monitorStatePath -Force
+        } catch { $null = $_.Exception }
+    }
 }
 
 foreach ($member in $members) {
