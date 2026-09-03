@@ -2,7 +2,7 @@
 
 The person who owns and operates this installation is the **Trainer**. It is a configurable local role label for the human operator. Every member uses the form of address recorded during onboarding.
 
-## Where the Trainer's details live
+## Where local details live
 
 Nothing personal belongs in this file or anywhere else in tracked governance. Onboarding writes the real values to `governance/trainer.local.md`, which is untracked by `.gitignore`.
 
@@ -13,7 +13,7 @@ Read that file for:
 - timezone; and
 - any working preferences the Trainer chose to record.
 
-If `trainer.local.md` does not exist, onboarding has not been run. Use "Trainer" and ask rather than guessing.
+If `trainer.local.md` does not exist, use "Trainer" and the language used in the current conversation. Ask rather than guessing any missing preference.
 
 ## How to address the Trainer
 

@@ -4,6 +4,11 @@ The vault is an Obsidian vault at `vault/`, inside this repository. It extends g
 
 Scaffold it from `templates/vault/` during onboarding — see `prompts/02-install-obsidian-vault.md`.
 
+## Location
+
+- Vault root: `<academy-repository>/vault/`.
+- It stays inside the Academy repository and shares that repository's history; installation-specific absolute paths do not belong in tracked governance.
+
 ## Layout
 
 Hub note at the vault root; every other note links back to it.
@@ -54,9 +59,13 @@ Hub note at the vault root; every other note links back to it.
 Two concurrent graph builds destroyed a 710-node graph in the system this template came from. The rule below exists because of that, and it is not obeyed by teams who are told the rule without the reason.
 
 - **Protocol first.** A graph *build* — anything that writes `graphify-out/` — runs only when the lead assigns it in a dispatch. No member auto-runs a build; no hook or per-edit rule may trigger one. Read-only `query`, `path`, and `explain` are always available to everyone.
-- **Lock, as defense in depth.** Before writing to `graphify-out/`, atomically create the directory `.graphify-out.lock` at the repository root — exclusive create, which fails if it already exists — containing the member name, process id, UTC timestamp, and task. If the lock is already there: **abort and report its contents. Never wait, never overwrite.** Remove the lock in a `finally` block, after success *or* failure. A stale lock may be removed only after confirming its process is dead, and only with the lead's approval; archive it rather than deleting it silently.
-- **Atomic promotion.** Build to a temporary file and rename into place after verified success. Never copy over a live `graph.json`. A drop in node count requires the lead's explicit approval, with the expected old and new counts and a reason.
-- **Undirected mode.** Keep the graph undirected so an ordinary incremental update can never flip the mode. Directed builds are one-off analyses that stay in scratch output and are never promoted.
+- **Lock, as defense in depth.** Before writing to `graphify-out/`, atomically create the directory `.graphify-out.lock` at the repository root — exclusive create, which fails if it already exists — containing `lock.json` with the member name, process id, UTC timestamp, and task. If the lock is already there: **abort and report its contents. Never wait, never overwrite.** Remove the lock in a `finally` block, after success *or* failure. A stale lock may be removed only after confirming its process is dead, and only with the lead's approval; archive it rather than deleting it silently.
+- **Atomic promotion.** Build to a temporary file and rename into place after verified success. Never copy over a live `graph.json` and never bypass the shrink guard. A drop in node count requires the lead's explicit approval, with the expected old and new counts and a reason.
+- **Undirected mode.** Keep the graph undirected so an ordinary incremental update can never flip the mode. Directed builds are one-off analyses that stay in `run-artifacts/` and are never promoted to the repository root.
+
+## Status and archive
+
+Completed setup logs and historical checklists belong in `vault/07-decisions/vault-history-archive.md`, not in this live operating guide.
 
 ## What the vault is not
 

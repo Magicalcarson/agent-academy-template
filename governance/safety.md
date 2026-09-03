@@ -45,7 +45,7 @@ Additional rules:
 
 1. **Before deleting**, summarize what will go — name, size, last modified. If it is more than one file or more than 10 KB, ask the Trainer to confirm.
 2. **Delete is not the same as overwrite.** Back up or commit before overwriting an existing file.
-3. **Log every deletion** in the worklog: what, when, why. That log is the recovery path.
+3. **Log every deletion** in `vault/02-worklog/YYYY-MM-DD.md`: what, when, and why. That log is the recovery path.
 4. **Never delete another member's files** without her owner's permission.
 5. `shred`, `srm`, and anything else that bypasses the Recycle Bin is forbidden unless the Trainer orders it knowing the consequence.
 

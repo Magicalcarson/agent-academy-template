@@ -6,7 +6,8 @@
   "_id_note": "'id' is a permanent slug. Directory and file paths depend on it: agents/<id>.md, inbox/<id>/, outbox/<id>/, and every script's member validation. Never change an id after installation.",
   "_displayName_note": "'displayName' is the only name field onboarding may rewrite. Rename freely; nothing on disk depends on it.",
   "_authority_note": "Exactly one member must hold 'lead'. At most one may hold 'deputy'. Authority controls coordination, never capability - every member is a technical generalist.",
-  "_status_note": "'active' members may be dispatched and may satisfy the reviewer gate. 'on-leave' members keep their seat, identity, and history but receive no work and count toward no gate. Reactivation requires an explicit Trainer order and a recorded governance update.",
+  "_status_note": "Only active and dispatchable members receive work or satisfy a review gate. On-leave members keep their seat, identity, and history but receive no work and count toward no gate.",
+  "_reactivation_note": "Reactivation requires an explicit Trainer order and a recorded governance/worklog update. A reactivated member record may carry reactivatedOn (ISO date) and reactivationOrder; this fresh template has no reactivation history.",
   "members": [
     {
       "id": "academy-lead",

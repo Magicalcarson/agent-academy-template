@@ -1,6 +1,6 @@
 # No platform subagents — absolute rule
 
-Agent Academy must never create, invoke, resume, wait for, or use the output of a platform-managed subagent.
+Agent Academy must never create, invoke, resume, wait for, or use any output of a platform-managed subagent.
 
 ## What is forbidden
 

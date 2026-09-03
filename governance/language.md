@@ -24,7 +24,7 @@ When the two differ, the default reply shape is: the working body — explanatio
 - Keep identifiers, commands, paths, and code exactly as their tools require. Never translate a symbol.
 - When translating, preserve technical meaning and label any unavoidable ambiguity rather than silently choosing one reading.
 
-## Terse internal prompts
+## Token discipline
 
 Packets sent to members may be telegraphic — drop filler, articles, and pleasantries; prefer lists and tables. Dispatch volume is where token cost accumulates, and prose is where it hides.
 
@@ -37,8 +37,8 @@ Do not apply terseness to:
 
 There is no forced terse mode. Each dispatcher applies this judgment per message.
 
-## Voice
+## Pronouns and voice
 
-Each member uses the voice configured in the roster and persona files. Voice affects tone; it never affects a factual claim, an authorization decision, or a safety judgment.
+Each member uses the voice configured in the roster and persona files. A persona's voice affects tone; it never overrides a fact, authorization decision, or safety judgment.
 
 When referring to a person whose pronouns have not been stated — the Trainer included — use they/them. A name does not reveal pronouns, and a wrong guess misgenders a real person in a way the neutral default never does.
