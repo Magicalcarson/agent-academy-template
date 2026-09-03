@@ -12,7 +12,7 @@
 [![Subagents](https://img.shields.io/badge/platform%20subagents-forbidden-dc2626.svg)](governance/no-subagents.md)
 [![Credentials](https://img.shields.io/badge/credentials%20in%20repo-none-0f766e.svg)](#accounts-subscriptions-and-api-keys)
 [![Reference team](https://img.shields.io/badge/reference%20team-5%20seats-7c3aed.svg)](#five-seats-today-adaptable-tomorrow)
-[![Portable skills](https://img.shields.io/badge/portable%20skills-28-f59e0b.svg)](#built-in-portable-skills)
+[![Portable skills](https://img.shields.io/badge/portable%20skills-31-f59e0b.svg)](#built-in-portable-skills)
 
 Created and developed by **Pokpong Sittisak**
 
@@ -258,7 +258,7 @@ Adding or permanently removing seats is possible, but it is an explicit governan
 
 ## Built-in portable skills
 
-Agent Academy ships with **28 curated skills** so a new installation begins with shared engineering methods instead of five disconnected assistants improvising five different processes. A skill is a focused instruction package: it tells a compatible CLI when a capability applies, what evidence to collect, which boundaries it must respect, and what a trustworthy result looks like.
+Agent Academy ships with **31 curated skills** so a new installation begins with shared engineering methods instead of five disconnected assistants improvising five different processes. A skill is a focused instruction package: it tells a compatible CLI when a capability applies, what evidence to collect, which boundaries it must respect, and what a trustworthy result looks like.
 
 Skills do not retrain a model, install a hidden service, or grant additional authority. They make repeatable methods portable across sessions and providers. Governance, project focus, operator approval, and the no-SubAgent rule always remain above every skill.
 
@@ -290,12 +290,12 @@ This gives the team a shared playbook without pretending the providers are the s
 | Capability family | Skills | What the family contributes |
 |---|---:|---|
 | **Engineering and architecture** | 8 | API, backend, container, failure, database, React, visual-design, and accessibility discipline. |
-| **Delivery and quality** | 7 | Research-first decisions, minimalism, systematic diagnosis, test-first work, verification, review handling, and security review. |
+| **Delivery and quality** | 9 | Research-first decisions, requirements and workflow discovery, minimalism, systematic diagnosis, test-first work, verification, review handling, and security review. |
 | **AI systems and agent operations** | 3 | LLM evaluation, project-level AI architecture, and diagnosis of quota/context/transport failures. |
 | **Memory and knowledge** | 6 | Daily records, consolidation, contradiction detection, synthesis, Obsidian architecture notes, and Graphify relationships. |
-| **Communication and presentation** | 2 | Audience-shaped operational communication and consistent visual themes. |
+| **Communication and presentation** | 3 | Audience-shaped operational communication, Thai/bilingual localization, and consistent visual themes. |
 | **Team session operations** | 2 | Visible warm-session startup and exact-window cooldown. |
-| **Total** | **28** | One versioned library distributed to every declared CLI surface. |
+| **Total** | **31** | One versioned library distributed to every declared CLI surface. |
 
 <details>
 <summary><strong>Engineering and architecture — 8 skills</strong></summary>
@@ -314,7 +314,7 @@ This gives the team a shared playbook without pretending the providers are the s
 </details>
 
 <details>
-<summary><strong>Delivery and quality — 7 skills</strong></summary>
+<summary><strong>Delivery and quality — 9 skills</strong></summary>
 
 | Skill | Purpose |
 |---|---|
@@ -325,6 +325,8 @@ This gives the team a shared playbook without pretending the providers are the s
 | [`verification-loop`](team-skills/verification-loop/) | Turns completion claims into inspectable evidence through proportional verification gates. |
 | [`receiving-code-review`](team-skills/receiving-code-review/) | Evaluates review feedback technically before implementation instead of accepting suggestions performatively. |
 | [`security-review`](team-skills/security-review/) | Performs a read-only, severity-ranked security review for an explicitly named sensitive scope without silently fixing or widening it. |
+| [`product-requirements-writing`](team-skills/product-requirements-writing/) | Turns ideas and workflow needs into scoped requirements, user stories, observable acceptance criteria, risks, and reviewable implementation slices. |
+| [`staff-workflow-research`](team-skills/staff-workflow-research/) | Researches real operational work, handoffs, exceptions, evidence, and workarounds before a team designs or automates a workflow. |
 
 </details>
 
@@ -354,11 +356,12 @@ This gives the team a shared playbook without pretending the providers are the s
 </details>
 
 <details>
-<summary><strong>Communication and presentation — 2 skills</strong></summary>
+<summary><strong>Communication and presentation — 3 skills</strong></summary>
 
 | Skill | Purpose |
 |---|---|
 | [`internal-comms`](team-skills/internal-comms/) | Shapes 3P updates, FAQs, newsletters, status reports, leadership updates, and incident communication for the intended audience. |
+| [`thai-localization-review`](team-skills/thai-localization-review/) | Reviews Thai and bilingual copy for meaning, naturalness, tone, terminology, layout, accessibility, and actionable guidance. |
 | [`theme-factory`](team-skills/theme-factory/) | Applies a coherent visual theme to suitable documents, presentations, reports, and HTML artifacts. |
 
 </details>
@@ -568,7 +571,7 @@ This loop reduces repeated discovery and context loss. Improvement comes from be
 
 - five original role-based identities with renameable display names and replaceable persona text;
 - portable governance for focus, dispatch, review, safety, deletion, language, and worklogs;
-- [28 curated portable skills](#built-in-portable-skills) with a manifest-driven cross-CLI synchronizer;
+- [31 curated portable skills](#built-in-portable-skills) with a manifest-driven cross-CLI synchronizer;
 - generated PowerShell wrappers for configured providers;
 - optional visible warm-session startup, durable packet delivery, and exact-window cooldown;
 - an Obsidian vault scaffold with portable settings;

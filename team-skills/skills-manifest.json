@@ -37,15 +37,18 @@
     { "name": "obsidian-architect", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored (vault command port)" },
     { "name": "ponytail", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "DietrichGebert/ponytail (MIT)", "sourceUrl": "https://github.com/DietrichGebert/ponytail", "licenseFile": "third-party-licenses/ponytail-MIT.txt" },
     { "name": "prisma-patterns", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" },
+    { "name": "product-requirements-writing", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" },
     { "name": "project-development", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "muratcankoylan/Agent-Skills-for-Context-Engineering (MIT)", "sourceUrl": "https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering", "licenseFile": "third-party-licenses/context-engineering-MIT.txt" },
     { "name": "react-patterns", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" },
     { "name": "receiving-code-review", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "obra/superpowers, Jesse Vincent (MIT)", "sourceUrl": "https://github.com/obra/superpowers", "licenseFile": "third-party-licenses/superpowers-MIT.txt" },
     { "name": "search-first", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" },
     { "name": "security-review", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" },
+    { "name": "staff-workflow-research", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" },
     { "name": "synthesis", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored (vault command port)" },
     { "name": "systematic-debugging", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "obra/superpowers, Jesse Vincent (MIT)", "sourceUrl": "https://github.com/obra/superpowers", "licenseFile": "third-party-licenses/superpowers-MIT.txt" },
     { "name": "tdd-workflow", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" },
     { "name": "theme-factory", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "anthropics/skills (Apache-2.0)", "sourceUrl": "https://github.com/anthropics/skills", "licenseFile": "team-skills/theme-factory/LICENSE.txt" },
+    { "name": "thai-localization-review", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" },
     { "name": "verification-loop", "mode": "junction", "docOnly": true, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" },
     { "name": "warmup", "mode": "junction", "docOnly": false, "surfaces": ["claude","codex","kimi","antigravity"], "source": "team-authored" }
   ]
